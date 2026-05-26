@@ -1,28 +1,28 @@
-# 🌟 Multi-World Adventure Game 🎮
+#Multi-World Adventure Game 
 
 A simple and fun **text-based adventure game** built with Python.  
 The player explores different worlds, battles enemies, chooses weapons, and collects treasures to earn points.
 
 ---
 
-## 🚀 Features
+##  Features
 
-- 🎮 Multiple locations to explore:
+-  Multiple locations to explore:
   - Haunted Forest
   - Abandoned Castle
   - Mysterious Cave
   - Enchanted Valley
 
-- ⚔️ Random enemies and weapons
-- 💎 Treasure collection system
-- 🎯 Difficulty levels (Easy / Medium / Hard)
-- 🧠 Simple combat system based on random strength
-- 🏆 Score tracking system
-- 🔁 Replayability (play multiple rounds)
+-  Random enemies and weapons
+-  Treasure collection system
+-  Difficulty levels (Easy / Medium / Hard)
+-  Simple combat system based on random strength
+-  Score tracking system
+-  Replayability (play multiple rounds)
 
 ---
 
-## 🧠 How It Works
+##  How It Works
 
 1. Choose your difficulty level
 2. Select a location to explore
@@ -33,14 +33,14 @@ The player explores different worlds, battles enemies, chooses weapons, and coll
 
 ---
 
-## 🛠️ Technologies Used
+##  Technologies Used
 
 - Python 3
 - Random module (`random`)
 
 ---
 
-## ▶️ How to Run the Game
+##  How to Run the Game
 
 1. Make sure Python is installed:
 ```bash
