@@ -2,10 +2,13 @@ import streamlit as st
 import random
 
 st.set_page_config(
-    page_title="Adventure Game",
-    page_icon="⚔️",
-    layout="centered"
+    page_title="Multi-World Adventure Game",
+    page_icon="⚔️"
 )
+
+# ==========================
+# Game Data
+# ==========================
 
 locations = {
     "Haunted Forest": {
@@ -30,53 +33,99 @@ locations = {
     }
 }
 
-st.title("⚔️ Multi-World Adventure Game")
-
-if "score" not in st.session_state:
-    st.session_state.score = 0
-
-difficulty = st.selectbox(
-    "Choose Difficulty",
-    ["Easy", "Medium", "Hard"]
-)
-
 difficulty_ranges = {
     "Easy": (1, 6),
     "Medium": (4, 8),
     "Hard": (6, 10)
 }
 
-selected_location = st.selectbox(
-    "Choose a Location",
-    list(locations.keys())
+# ==========================
+# Session State
+# ==========================
+
+if "score" not in st.session_state:
+    st.session_state.score = 0
+
+if "stage" not in st.session_state:
+    st.session_state.stage = "explore"
+
+# ==========================
+# Header
+# ==========================
+
+st.title("⚔️ Multi-World Adventure Game")
+
+st.markdown("""
+🌟 Welcome to the Multi-World Adventure Game! 🌟
+
+Explore mysterious places, fight enemies, and collect treasures to gain points.
+""")
+
+st.success(f"🎯 Current Score: {st.session_state.score}")
+
+# ==========================
+# Difficulty
+# ==========================
+
+difficulty = st.selectbox(
+    "🎮 Choose Difficulty",
+    ["Easy", "Medium", "Hard"]
 )
 
-if st.button("🚀 Explore"):
-    
-    enemy = random.choice(locations[selected_location]["enemies"])
-    weapon = random.choice(locations[selected_location]["weapons"])
-    treasure = random.choice(locations[selected_location]["treasures"])
+# ==========================
+# Explore Stage
+# ==========================
 
-    st.session_state.enemy = enemy
-    st.session_state.weapon = weapon
-    st.session_state.treasure = treasure
+if st.session_state.stage == "explore":
 
-if "enemy" in st.session_state:
+    location = st.selectbox(
+        "🧭 Choose a Location",
+        list(locations.keys())
+    )
+
+    if st.button("🚀 Explore"):
+
+        st.session_state.location = location
+        st.session_state.enemy = random.choice(
+            locations[location]["enemies"]
+        )
+
+        st.session_state.weapon = random.choice(
+            locations[location]["weapons"]
+        )
+
+        st.session_state.treasure = random.choice(
+            locations[location]["treasures"]
+        )
+
+        st.session_state.stage = "fight"
+
+        st.rerun()
+
+# ==========================
+# Fight Stage
+# ==========================
+
+elif st.session_state.stage == "fight":
+
+    st.subheader(
+        f"🧭 You are heading into the {st.session_state.location}"
+    )
 
     st.warning(
-        f"A wild {st.session_state.enemy} appeared!"
+        f"👾 A wild {st.session_state.enemy} appears!"
     )
 
     st.info(
-        f"You picked up {st.session_state.weapon}"
+        f"🗡 You grab {st.session_state.weapon} to defend yourself."
     )
 
     action = st.radio(
-        "What will you do?",
+        "What do you want to do?",
         ["Fight", "Run Away"]
     )
 
-    if st.button("⚔️ Continue"):
+    if st.button("Continue"):
 
         if action == "Fight":
 
@@ -86,45 +135,80 @@ if "enemy" in st.session_state:
                 *difficulty_ranges[difficulty]
             )
 
-            st.write(
-                f"Your Strength: {player_strength}"
-            )
-
-            st.write(
-                f"Enemy Strength: {enemy_strength}"
-            )
+            st.session_state.player_strength = player_strength
+            st.session_state.enemy_strength = enemy_strength
 
             if player_strength >= enemy_strength:
-
-                st.success(
-                    f"🎉 Victory! You defeated the {st.session_state.enemy}"
-                )
-
-                st.success(
-                    f"🏆 You found {st.session_state.treasure}"
-                )
-
+                st.session_state.result = "win"
                 st.session_state.score += 10
-
             else:
-
-                st.error(
-                    f"💀 Defeat! The {st.session_state.enemy} defeated you."
-                )
+                st.session_state.result = "lose"
 
         else:
+            st.session_state.result = "run"
 
-            st.warning(
-                "🏃 You escaped safely."
-            )
+        st.session_state.stage = "result"
 
-st.markdown("---")
+        st.rerun()
 
-st.subheader(
-    f"🎯 Current Score: {st.session_state.score}"
-)
+# ==========================
+# Result Stage
+# ==========================
 
-if st.button("🔄 Reset Game"):
-    st.session_state.score = 0
-    st.rerun()
-  
+elif st.session_state.stage == "result":
+
+    if st.session_state.result == "win":
+
+        st.write(
+            f"💪 Your Strength: {st.session_state.player_strength}"
+        )
+
+        st.write(
+            f"👾 Enemy Strength: {st.session_state.enemy_strength}"
+        )
+
+        st.success(
+            f"🎉 Victory! You defeated the {st.session_state.enemy}"
+        )
+
+        st.success(
+            f"🏆 You found {st.session_state.treasure}"
+        )
+
+    elif st.session_state.result == "lose":
+
+        st.write(
+            f"💪 Your Strength: {st.session_state.player_strength}"
+        )
+
+        st.write(
+            f"👾 Enemy Strength: {st.session_state.enemy_strength}"
+        )
+
+        st.error(
+            f"💀 You were defeated by the {st.session_state.enemy}"
+        )
+
+    else:
+
+        st.warning(
+            f"🏃 You ran away from the {st.session_state.enemy}"
+        )
+
+    st.success(
+        f"🎯 Total Score: {st.session_state.score}"
+    )
+
+    col1, col2 = st.columns(2)
+
+    with col1:
+        if st.button("🌍 Explore Another Place"):
+            st.session_state.stage = "explore"
+            st.rerun()
+
+    with col2:
+        if st.button("🔄 Restart Game"):
+            st.session_state.score = 0
+            st.session_state.stage = "explore"
+            st.rerun()
+            
